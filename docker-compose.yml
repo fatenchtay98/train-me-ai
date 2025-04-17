@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: trainmeai_db
+    environment:
+      POSTGRES_DB: trainmeai
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  streamlit:
+    build:
+      context: ./EEP
+    container_name: trainmeai_eep
+    env_file: ./EEP/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    ports:
+      - "8501:8501"
+
+volumes:
+  pgdata:
