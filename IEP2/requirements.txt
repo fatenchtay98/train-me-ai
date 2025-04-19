@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+numpy
+gymnasium
+stable-baselines3[extra]
+psycopg2-binary
+python-dotenv
+sqlalchemy
