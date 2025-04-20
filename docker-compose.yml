@@ -25,5 +25,17 @@ services:
     ports:
       - "8501:8501"
 
+  iep2:
+    build:
+      context: ./IEP2
+    container_name: trainmeai_iep2
+    env_file: ./IEP2/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+
 volumes:
   pgdata:
