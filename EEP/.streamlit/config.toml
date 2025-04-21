@@ -3,7 +3,7 @@ headless = true
 enableStaticServing = true
 
 [theme]
-base = "dark"
+base = "light"
 
 [client]
 showSidebarNavigation = false
