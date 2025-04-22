@@ -50,5 +50,16 @@ services:
     ports:
       - "8001:8001"
 
+  iep3:
+    build:
+      context: ./IEP3
+    container_name: trainmeai_iep3
+    env_file: ./IEP3/.env 
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    ports:
+      - 8002:8002
 volumes:
   pgdata:
