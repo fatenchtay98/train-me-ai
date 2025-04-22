@@ -6,6 +6,7 @@ from streamlit_echarts import st_echarts
 from sidebar import load_sidebar
 import requests
 import json
+import base64
 
 st.set_page_config(page_title="Automatic Diet Recommendation", page_icon="🥗", layout="wide")
 st.title("🥗 Automatic Diet Recommendation")
@@ -131,7 +132,7 @@ class Display:
                 st.markdown(f"### {meal.title()}")
                 for recipe in recipes:
                     with st.expander(recipe["Name"]):
-                        st.image(recipe["image_link"], use_column_width=True)
+                        st.image(recipe["image_link"], use_container_width=True)
                         nutritions_df = pd.DataFrame({k: [recipe[k]] for k in nutritions_values}).T.rename(columns={0: 'Amount (g or kcal)'})
                         st.markdown("**Nutritional Values:**")
                         st.dataframe(nutritions_df)
@@ -209,11 +210,37 @@ class Display:
 # ───────────────────────────────────── UI ───────────────────────────────────── #
 display = Display()
 
+def img_to_base64(img_path):
+    with open(img_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+male_img = img_to_base64("static/icons/male.png")
+female_img = img_to_base64("static/icons/female.png")
+
 with st.form("form"):
     age = st.number_input("Age", 15, 100)
     height = st.number_input("Height (cm)", 100, 250)
     weight = st.number_input("Weight (kg)", 30, 200)
-    gender = st.radio("Gender", ["Male", "Female"])
+    st.markdown("Gender")
+    
+    st.markdown(f"""
+        <div style="display: flex; gap: 12px; justify-content: left;">
+            <img src='data:image/png;base64,{male_img}' style='height:80px; margin:0px; padding:0px;'/>
+            <img src='data:image/png;base64,{female_img}' style='height:73px; margin:0px; padding:0px;'/>
+        </div>
+        """, unsafe_allow_html=True)
+        
+
+    gender = st.radio("", ["Male", "Female"], horizontal=True)
+
+    st.markdown("""
+    <style>
+    div[data-baseweb="radio-group"] > div {
+        margin-right: 200px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     activity = st.selectbox("Activity Level", [
         'Little/no exercise', 'Light exercise', 'Moderate exercise (3-5 days/wk)',
         'Very active (6-7 days/wk)', 'Extra active (physical job)'])
