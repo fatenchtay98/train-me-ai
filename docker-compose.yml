@@ -24,6 +24,9 @@ services:
       - postgres
     ports:
       - "8501:8501"
+    devices:
+      - "/dev/video0:/dev/video0"
+    privileged: true
 
   iep2:
     build:
