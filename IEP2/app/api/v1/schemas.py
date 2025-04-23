@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union
 from pydantic import BaseModel, Field
 
 
@@ -15,6 +15,8 @@ class ExerciseItem(BaseModel):
     difficulty: str
     goals: List[str]
     feedback_rating: Optional[float] = None
+    sets: int
+    reps: int
 
 
 class RecommendResponse(BaseModel):
@@ -27,6 +29,6 @@ class FeedbackRequest(BaseModel):
     exercise_name: str
     category: str
     difficulty: str
-    rating: float = Field(..., ge=1.0, le=5.0)
+    rating: Union[int, str]
     exercise_completed: bool = False
     time_spent: float = Field(..., ge=0.0)

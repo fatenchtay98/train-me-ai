@@ -63,7 +63,23 @@ def recommend_workout_plan(data: RecommendRequest):
                 goals=",".join(exercise["goals"]),
             )
             db.add(ex_item)
-            plan.append(ExerciseItem(**exercise))
+            sets = 3
+            reps = 12
+            if data.fitness_level == "beginner":
+                sets, reps = 2, 10
+            elif data.fitness_level == "intermediate":
+                sets, reps = 3, 12
+            elif data.fitness_level == "advanced":
+                sets, reps = 4, 15
+
+            plan.append(ExerciseItem(
+                name=exercise["name"],
+                category=exercise["category"],
+                difficulty=exercise["difficulty"],
+                goals=exercise["goals"],
+                sets=sets,
+                reps=reps
+            ))            
             seen.add(exercise["name"])
 
         if done:
