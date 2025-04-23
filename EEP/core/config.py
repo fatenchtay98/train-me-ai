@@ -13,4 +13,4 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 # API endpoints
 IEP1_URL = os.getenv("IEP1_URL")
 IEP2_URL = os.getenv("IEP2_URL")
-IEP3_URL = os.getenv("IEP3_API_URL")
+IEP3_URL = os.getenv("IEP3_URL")
