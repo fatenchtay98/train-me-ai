@@ -5,57 +5,71 @@ import os
 import pandas as pd
 
 # ---------- Page Setup ----------
-st.set_page_config(page_title="GymBuddyAI - Chat", layout="wide")
+st.set_page_config(page_title="GymBuddyAI | TrainMeAI", layout="wide")
 
 # ---------- Global Styling ----------
-st.markdown(
-    """
-    <style>
-        body {
-            background-color: #F4F6F8;
-        }
-        .chat-bubble {
-            padding: 12px 18px;
-            border-radius: 20px;
-            color: white;
-            max-width: 80%;
-            font-size: 16px;
-            line-height: 1.5;
-        }
-        .user-bubble {
-            background-color: #5B8DEF;
-            margin-left: auto;
-            text-align: right;
-        }
-        .ai-bubble {
-            background-color: #AAB8C2;
-            margin-right: auto;
-            text-align: left;
-        }
-        .chat-wrapper {
-            background-color: #F4F6F8;
-            padding: 1rem;
-            border-radius: 12px;
-        }
-        .dot {
-            animation: blink 1.4s infinite;
-            font-weight: bold;
-            color: #ffffff;
-        }
-        .dot:nth-of-type(2) { animation-delay: 0.2s; }
-        .dot:nth-of-type(3) { animation-delay: 0.4s; }
-        @keyframes blink {
-            0%   { opacity: 0.2; }
-            20%  { opacity: 1; }
-            100% { opacity: 0.2; }
-        }
-    </style>
-""",
-    unsafe_allow_html=True,
-)
+st.markdown("""
+<style>
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif !important;
+    }
+    h1, h2 {
+        color: #1664AD !important;
+        font-weight: 700;
+    }
+    section[data-testid="stSidebar"] h1 {
+        color: #1664AD !important;
+    }
+    label, .stSelectbox label, .stRadio label, .stSlider label {
+        color: #1664AD !important;
+        font-weight: 600;
+        font-size: 1.05rem;
+    }
+    .chat-wrapper {
+        background-color: #F4F6F8;
+        padding: 1rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        border-left: 5px solid #1664AD;
+    }
+    .chat-bubble {
+        padding: 12px 18px;
+        border-radius: 20px;
+        color: white;
+        max-width: 80%;
+        font-size: 16px;
+        line-height: 1.5;
+    }
+    .user-bubble {
+        background-color: #1664AD;
+        margin-left: auto;
+        text-align: right;
+    }
+    .ai-bubble {
+        background-color: #1976D2;
+        margin-right: auto;
+        text-align: left;
+    }
+    .ai-bubble strong {
+        color: #ffffff;
+    }
+    .dot {
+        animation: blink 1.4s infinite;
+        font-weight: bold;
+        color: white;
+    }
+    .dot:nth-of-type(2) { animation-delay: 0.2s; }
+    .dot:nth-of-type(3) { animation-delay: 0.4s; }
+    @keyframes blink {
+        0% { opacity: 0.2; }
+        20% { opacity: 1; }
+        100% { opacity: 0.2; }
+    }
+</style>
+""", unsafe_allow_html=True)
 
 # ---------- Session Defaults ----------
-st.session_state.setdefault("user", "FitBuddy")
+st.session_state.setdefault("user", "GymBuddy")
 st.session_state.setdefault("chat_history", [])
 st.session_state.setdefault("fitness_level", "beginner")
 st.session_state.setdefault("goal", "weight_loss")
@@ -77,9 +91,22 @@ with st.sidebar:
     st.markdown("---")
     if st.button("🧹 Clear Chat"):
         st.session_state["chat_history"] = []
+    if st.button("⬅️ Back to Main"):
+        st.switch_page("pages/Home.py")
 
 # ---------- Header ----------
 st.title("🤖 GymBuddyAI")
+st.markdown(
+    """
+    <style>
+    h1 {d
+        color: #1664AD !important;
+        font-weight: 700 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 st.markdown(
     f"""
 <div style="margin-bottom:1.5rem; font-size:18px; color:#2E2E2E;">
@@ -222,3 +249,4 @@ if user_question:
 # ---------- Display All Messages ----------
 for chat in st.session_state["chat_history"]:
     render_chat(chat["user"], chat["ai"])
+

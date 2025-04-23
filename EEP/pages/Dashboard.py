@@ -2,7 +2,7 @@ import streamlit as st
 from sidebar import load_sidebar
 
 st.set_page_config(
-    page_title="Dashboard",
+    page_title="Dashboard | TrainMeAI",
     layout="wide",
     initial_sidebar_state="expanded",
     menu_items=None,
