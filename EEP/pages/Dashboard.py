@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 load_sidebar()
-st.title("📊 Dashboard")
+st.markdown("<h1 style='color:#1664AD;'>📊 Dashboard</h1>", unsafe_allow_html=True)
 
 # --- ENV CONFIG ---
 IEP2_URL = os.getenv("IEP2_URL", "http://localhost:8002")  # Fallback for local dev
