@@ -52,3 +52,4 @@ def load_sidebar():
     nav_link("dumbbell.svg", "Workout Recommender", "pages/WorkoutRecommender.py")
     nav_link("switch-camera.svg", "Pose Estimation", "pages/PoseEstimation.py")
     nav_link("salad.svg", "Diet Recommender", "pages/DietRecommender.py")
+    nav_link("home.svg", "GymBuddyAI", "pages/chatbot.py")
