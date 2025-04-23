@@ -8,13 +8,11 @@ import requests
 import numpy as np
 from io import BytesIO
 import time
+from sidebar import load_sidebar
 
-# Add backend path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-from core.config import IEP1_URL
+st.set_page_config(page_title="Pose Estimation | TrainMeAI", layout="centered")
 
-st.set_page_config(page_title="Pose Estimation", layout="centered")
-
+load_sidebar()
 # ------------------- Helpers -------------------
 
 def lucide_icon(icon_name, size=20):
@@ -27,19 +25,27 @@ def lucide_icon(icon_name, size=20):
     except FileNotFoundError:
         return ""
 
-def alert_box(icon_svg, message, color="#ffe6e6", border="#e74c3c"):
-    st.markdown(f"""
+def alert_box(icon_svg, message, color="#FDECEA", border="#e74c3c"):
+    st.markdown(
+        f"""
     <div style="padding: 1em; background-color: {color}; border-left: 5px solid {border}; border-radius: 5px;">
         {icon_svg} <b>{message}</b>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
+
 
 def success_box(icon_svg, message):
-    st.markdown(f"""
-    <div style="padding: 1em; background-color: #e6ffed; border-left: 5px solid #27ae60; border-radius: 5px;">
+    st.markdown(
+        f"""
+    <div style="padding: 1em; background-color: #E6F4EA; border-left: 5px solid #27ae60; border-radius: 5px;">
         {icon_svg} <b>{message}</b>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
+
 
 # ------------------- App State -------------------
 
@@ -53,13 +59,20 @@ EXERCISES = {
     "Lateral Raise": "static/gifs/overhead_press.gif",
     "Shoulder Press": "static/gifs/resistance_band_chest_press.gif",
     "Jumping Jack": "static/gifs/jump_squat.gif",
-    "Tricep Extension": "static/gifs/tricep_extension.webp"
+    "Tricep Extension": "static/gifs/tricep_extension.webp",
 }
 
 # ------------------- UI Sections -------------------
 
 def show_exercise_selection():
-    st.markdown(f"## {lucide_icon('dumbbell')} Select an Exercise to Evaluate", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+    <h2 style='color:#1664AD; font-weight:700; margin-bottom:1rem;'>
+        {lucide_icon('dumbbell')} Select an Exercise to Evaluate
+    </h2>
+    """,
+        unsafe_allow_html=True,
+    )
     cols = st.columns(3)
     for idx, (name, gif_path) in enumerate(EXERCISES.items()):
         with cols[idx % 3]:
@@ -69,41 +82,58 @@ def show_exercise_selection():
             img.save(buf, format="PNG")
             b64_img = base64.b64encode(buf.getvalue()).decode()
             is_selected = st.session_state["selected_exercise"] == name
-            border = "3px solid red" if is_selected else "1px solid #ccc"
-            filter_style = "grayscale(0%)" if is_selected else "grayscale(100%) brightness(90%)"
+            border = "3px solid #1664AD" if is_selected else "1px solid #ddd"
+            bg_color = "#F4F6F8" if is_selected else "#fff"
+            filter_style = (
+                "grayscale(0%)" if is_selected else "grayscale(100%) brightness(90%)"
+            )
 
-            st.markdown(f"""
-            <div style="position: relative; border: {border}; border-radius: 12px; overflow: hidden; margin-bottom: 10px;">
+            st.markdown(
+                f"""
+            <div style="position: relative; border: {border}; border-radius: 12px; background-color: {bg_color};
+                         overflow: hidden; margin-bottom: 10px; transition: 0.3s;">
                 <img src="data:image/png;base64,{b64_img}" 
-                    style="width:100%; display:block; filter: {filter_style}; transition: 0.3s;" />
+                    style="width:100%; display:block; filter: {filter_style};" />
             </div>
-            """, unsafe_allow_html=True)
+            """,
+                unsafe_allow_html=True,
+            )
 
             if st.button(name, key=f"btn_{name}"):
                 st.session_state["selected_exercise"] = name
 
 def show_mode_selector():
     st.markdown("---")
-    st.markdown(f"## {lucide_icon('cpu')} How do you want to analyze your form?", unsafe_allow_html=True)
+    st.markdown(
+        f"""
+    <h2 style='color:#1664AD; font-weight:700; margin-bottom:1rem;'>
+        {lucide_icon('cpu')} How do you want to analyze your form?
+    </h2>
+    """,
+        unsafe_allow_html=True,
+    )
 
     col1, col2 = st.columns(2)
 
     def mode_card(icon_name, title, desc, button_label, mode_key):
-        st.markdown(f"""
+        st.markdown(
+            f"""
         <div style='
-            padding: 1em;
-            border: 1px solid #ccc;
+            padding: 1.2em;
+            border: 1px solid #D6E4F0;
             border-radius: 10px;
-            background-color: #f9f9f9;
-            box-shadow: 1px 1px 5px rgba(0,0,0,0.05);
+            background-color: #F4F6F8;
+            box-shadow: 1px 1px 6px rgba(0,0,0,0.04);
             margin-bottom: 1em;
         '>
             <div style='display: flex; align-items: center; gap: 10px; margin-bottom: 8px;'>
-                {lucide_icon(icon_name, size=22)} <h4 style='margin: 0;'>{title}</h4>
+                {lucide_icon(icon_name, size=22)} <h4 style='margin: 0; color: #1664AD;'>{title}</h4>
             </div>
-            <p style='margin-top: 0; font-size: 0.9rem;'>{desc}</p>
+            <p style='margin-top: 0; font-size: 1rem; color: #333;'>{desc}</p>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         if st.button(button_label, use_container_width=True):
             st.session_state.analysis_mode = mode_key
@@ -114,7 +144,7 @@ def show_mode_selector():
             title="Upload a Video",
             desc="Record your workout and upload it to get AI feedback and rep count.",
             button_label="Analyze Uploaded Video",
-            mode_key="upload"
+            mode_key="upload",
         )
 
     with col2:
@@ -123,54 +153,81 @@ def show_mode_selector():
             title="Live Camera Analysis",
             desc="Use your webcam for real-time form correction and rep tracking.",
             button_label="Start Live Analysis",
-            mode_key="live"
+            mode_key="live",
         )
+
 
 def show_fitness_level_selector():
     st.selectbox(
         "Select your fitness level",
         options=["beginner", "pro"],
         index=0 if st.session_state["fitness_level"] == "beginner" else 1,
-        key="fitness_level"
+        key="fitness_level",
     )
 
 # ------------------- Analysis Handlers -------------------
 
 def handle_video_upload():
-    st.markdown(f"### {lucide_icon('square-play')} Upload Your Exercise Video", unsafe_allow_html=True)
-    uploaded_file = st.file_uploader("Upload a video (MP4, MOV, AVI)", type=["mp4", "mov", "avi"])
+    st.markdown(
+        f"### {lucide_icon('square-play')} Upload Your Exercise Video",
+        unsafe_allow_html=True,
+    )
+    uploaded_file = st.file_uploader(
+        "Upload a video (MP4, MOV, AVI)", type=["mp4", "mov", "avi"]
+    )
     if uploaded_file:
         st.video(uploaded_file)
-        st.markdown(f"{lucide_icon('rocket')} <b>Ready to let the AI judge your form?</b>", unsafe_allow_html=True)
+        st.markdown(
+            f"{lucide_icon('rocket')} <b>Ready to let the AI judge your form?</b>",
+            unsafe_allow_html=True,
+        )
         if st.button("Analyze Video Now"):
             with st.spinner("Analyzing... because AI judge too 🤖🧐"):
                 TEMP_FOLDER = "temp_videos"
                 os.makedirs(TEMP_FOLDER, exist_ok=True)
 
                 timestamp = time.strftime("%Y%m%d_%H%M%S")
-                safe_exercise = st.session_state["selected_exercise"].lower().replace(" ", "_")
-                output_path = os.path.join(TEMP_FOLDER, f"{safe_exercise}_{timestamp}.mp4")
+                safe_exercise = (
+                    st.session_state["selected_exercise"].lower().replace(" ", "_")
+                )
+                output_path = os.path.join(
+                    TEMP_FOLDER, f"{safe_exercise}_{timestamp}.mp4"
+                )
 
-                files = {"video": (uploaded_file.name, uploaded_file, uploaded_file.type)}
+                files = {
+                    "video": (uploaded_file.name, uploaded_file, uploaded_file.type)
+                }
                 data = {
                     "exercise": safe_exercise,
-                    "level": st.session_state["fitness_level"]
+                    "level": st.session_state["fitness_level"],
                 }
 
                 try:
-                    response = requests.post(f"{IEP1_URL}/analyze-video", files=files, data=data)
+                    response = requests.post(
+                        f"{IEP1_URL}/analyze-video", files=files, data=data
+                    )
                     if response.status_code == 200:
                         with open(output_path, "wb") as f:
                             f.write(response.content)
-                        success_box(lucide_icon("check-circle"), "Results ready. Minimal judgment... maximum gains 💪😄")
+                        success_box(
+                            lucide_icon("check-circle"),
+                            "Results ready. Minimal judgment... maximum gains 💪😄",
+                        )
                         st.video(output_path)
                     else:
-                        alert_box(lucide_icon("circle-stop"), f"Error: {response.status_code} - {response.text}")
+                        alert_box(
+                            lucide_icon("circle-stop"),
+                            f"Error: {response.status_code} - {response.text}",
+                        )
                 except Exception as e:
                     alert_box(lucide_icon("circle-stop"), f"Connection error: {e}")
 
+
 def handle_live_camera():
-    st.markdown(f"### {lucide_icon('video')} Real-time Feedback with Camera", unsafe_allow_html=True)
+    st.markdown(
+        f"### {lucide_icon('video')} Real-time Feedback with Camera",
+        unsafe_allow_html=True,
+    )
     stframe = st.empty()
     stop_signal = st.empty()
 
@@ -199,11 +256,13 @@ def handle_live_camera():
             "session_id": "live-session",
             "image": img_base64,
             "exercise": st.session_state["selected_exercise"].lower().replace(" ", "_"),
-            "level": st.session_state["fitness_level"]
+            "level": st.session_state["fitness_level"],
         }
 
         try:
-            response = requests.post(f"{IEP1_URL}/analyze-frame", json=payload, timeout=5)
+            response = requests.post(
+                f"{IEP1_URL}/analyze-frame", json=payload, timeout=5
+            )
             if response.status_code == 200:
                 res = response.json()
                 frame_data = base64.b64decode(res["frame"])
@@ -211,7 +270,10 @@ def handle_live_camera():
                 processed = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
                 stframe.image(processed, channels="BGR")
             else:
-                alert_box(lucide_icon("triangle-alert"), f"Response {response.status_code}: {response.text}")
+                alert_box(
+                    lucide_icon("triangle-alert"),
+                    f"Response {response.status_code}: {response.text}",
+                )
         except Exception as e:
             alert_box(lucide_icon("triangle-alert"), f"API Error: {e}")
             break

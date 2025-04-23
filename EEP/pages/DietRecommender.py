@@ -8,9 +8,26 @@ import requests
 import json
 import base64
 
-st.set_page_config(page_title="Automatic Diet Recommendation", page_icon="🥗", layout="wide")
-st.title("🥗 Automatic Diet Recommendation")
+st.set_page_config(page_title="Diet Recommender | TrainMeAI", page_icon="🥗", layout="wide")
+st.markdown("<h1>🥗 Automatic Diet Recommender</h1>", unsafe_allow_html=True)
 load_sidebar()
+
+# ---------- Styles ----------
+st.markdown("""
+<style>
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
+    /* Headings in blue */
+    div[data-testid="stMarkdownContainer"] h1,
+    div[data-testid="stMarkdownContainer"] h2,
+    div[data-testid="stMarkdownContainer"] h3 {
+        color: #1664AD !important;
+        font-weight: 700;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 
 nutritions_values = ['Calories', 'FatContent', 'SaturatedFatContent', 'CholesterolContent', 'SodiumContent',
                      'CarbohydrateContent', 'FiberContent', 'SugarContent', 'ProteinContent']
@@ -94,7 +111,7 @@ class Generator:
         }
         response=requests.post(url='http://iep3:8002/predict/',data=json.dumps(request))
         return response
-    
+
 class Display:
     def __init__(self):
         self.plans = ["Maintain", "Mild", "Moderate", "Extreme"]
@@ -123,7 +140,7 @@ class Display:
             st.metric(plan, f"{round(base * ratio)} cal/day", delta=loss)
 
     def display_recommendation(self, person, recommendations):
-        st.subheader("🍽️ Recommended Meals")
+        st.markdown("<h2>🍽️ Recommended Meals</h2>", unsafe_allow_html=True)
         meal_names = list(person.meals_perc.keys())
         cols = st.columns(len(meal_names))
 
@@ -150,7 +167,7 @@ class Display:
                         """)
 
     def display_meal_choices_and_charts(self, person, recommendations):
-        st.subheader("🌟 Final Meal Selection + Charts")
+        st.markdown("<h2>🌟 Final Meal Selection + Charts</h2>", unsafe_allow_html=True)
         choices = []
         for i, (meal, recipes) in enumerate(zip(person.meals_perc.keys(), recommendations)):
             key = f"meal_choice_{i}"
@@ -181,7 +198,7 @@ class Display:
 
         goal = round(person.calories_calculator() * person.weight_loss)
 
-        st.subheader("📊 Total Calories Comparison")
+        st.markdown("<h2>📊 Total Calories Comparison</h2>", unsafe_allow_html=True)
         st_echarts({
             "xAxis": {"type": "category", "data": ["Selected", "Goal"]},
             "yAxis": {"type": "value"},
@@ -194,7 +211,7 @@ class Display:
             }]
         }, height="400px")
 
-        st.subheader("🥗 Macronutrient Breakdown")
+        st.markdown("<h2>🥗 Macronutrient Breakdown</h2>", unsafe_allow_html=True)
         pie_data = [{"value": round(total[k]), "name": k} for k in total if total[k] > 0]
         st_echarts({
             "tooltip": {"trigger": "item"},
@@ -218,11 +235,13 @@ male_img = img_to_base64("static/icons/male.png")
 female_img = img_to_base64("static/icons/female.png")
 
 with st.form("form"):
+    st.markdown("<h2>📄 Fill In Your Details</h2>", unsafe_allow_html=True)
+    st.markdown("<div class='card'>", unsafe_allow_html=True)
     age = st.number_input("Age", 15, 100)
     height = st.number_input("Height (cm)", 100, 250)
     weight = st.number_input("Weight (kg)", 30, 200)
     st.markdown("Gender")
-    
+
     st.markdown(f"""
         <div style="display: flex; gap: 12px; justify-content: left;">
             <img src='data:image/png;base64,{male_img}' style='height:80px; margin:0px; padding:0px;'/>
@@ -267,4 +286,5 @@ if st.session_state.generated:
         display.display_recommendation(st.session_state.person, st.session_state.recommendations)
     with tabs[2]:
         display.display_meal_choices_and_charts(st.session_state.person, st.session_state.recommendations)
+
         
