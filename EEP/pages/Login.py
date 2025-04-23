@@ -98,6 +98,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 if submitted:
     user = get_user_by_username(username)
     if user and bcrypt.checkpw(password.encode(), user.hashed_password.encode()):
+        st.session_state["user"] = username
         st.success(f"Welcome back, {username}!")
         st.page_link("pages/Dashboard.py", label="Go to Dashboard")
     else:
