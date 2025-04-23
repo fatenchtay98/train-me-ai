@@ -26,7 +26,6 @@ st.markdown("""
         font-size: 1.05rem;
     }
     .chat-wrapper {
-        background-color: #F4F6F8;
         padding: 1rem;
         border-radius: 12px;
         margin-bottom: 1.5rem;
@@ -41,7 +40,7 @@ st.markdown("""
         line-height: 1.5;
     }
     .user-bubble {
-        background-color: #1664AD;
+        background-color: #969ba1;
         margin-left: auto;
         text-align: right;
     }
@@ -124,12 +123,12 @@ st.markdown("- How can I improve my form on squats?")
 
 
 # ---------- API Setup ----------
-API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
-HF_TOKEN = st.secrets["HF_TOKEN"]
-headers = {"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"}
-IEP2_URL = os.getenv("IEP2_API_URL")
-IEP3_URL = os.getenv("IEP3_API_URL")
+IEP2_URL = os.getenv("IEP2_URL")
+IEP3_URL = os.getenv("IEP3_URL")
+HF_TOKEN = os.getenv("HF_TOKEN")
 
+API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+headers = {"Authorization": f"Bearer {HF_TOKEN}", "Content-Type": "application/json"}
 
 # ---------- Intent Detection ----------
 def detect_intent(user_input):
