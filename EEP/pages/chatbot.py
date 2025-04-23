@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import json
 import os
+import pandas as pd
 
 # ---------- Page Setup ----------
 st.set_page_config(page_title="GymBuddyAI - Chat", layout="wide")
@@ -141,23 +142,37 @@ def handle_workout_recommendation():
 def handle_meal_plan():
     try:
         payload = {
-            "fitness_level": st.session_state["fitness_level"],
             "goal": st.session_state["goal"],
-            "dietary_preferences": ["high_protein"],
+            "fitness_level": st.session_state["fitness_level"],
+            "dietary_preferences": []  # optional: add user-defined restrictions
         }
-        response = requests.post(f"{IEP3_URL}/predict", json=payload)
-        if response.status_code == 200:
-            data = response.json()
-            meals = data.get("meals", [])
-            if meals:
-                return "🥗 Here's your meal plan:<br>• " + "<br>• ".join(
-                    [meal["name"] for meal in meals]
+
+        response = requests.post(f"{IEP3_URL}/goal-plan/", json=payload)
+        
+        if response.status_code != 200:
+            return f"Failed to get meal plan. ({response.status_code})"
+
+        recipes = response.json()
+        if not recipes:
+            return "🤷 No meals found for your current goal."
+
+        messages = []
+        for meal in recipes:
+            msg = f"""
+🍽️ **{meal['name']}**  
+⏱️ Prep: {meal['prep_time']} min | Cook: {meal['cook_time']} min  
+💪 Protein: {meal['protein']}g | 🍬 Sugar: {meal['sugar']}g | 🌾 Fiber: {meal['fiber']}g  | 🌾 Calories: {meal['calories']}g 
+📋 Ingredients: {meal['ingredients'].strip('c()').replace('"', '')}  
+🧑‍🍳 Instructions: {meal['instructions'].strip('c()').replace('"', '').split(',')[0]}...
+"""
+            messages.append(msg)
+
+        return "Here's your Meals:<br>• " + "<br>• ".join(
+                    ex for ex in messages
                 )
-            else:
-                return "🤷 No meals found."
-        return f"IEP3 Error: {response.status_code}"
+
     except Exception as e:
-        return f"Error fetching meal plan: {e}"
+        return f"Error fetching meals: {e}"
 
 
 def handle_general_chat(user_input):

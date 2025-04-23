@@ -50,6 +50,23 @@ class PredictionOut(BaseModel):
     output: Optional[List[Recipe]] = None
 
 
+class GoalRequest(BaseModel):
+    goal: str
+    fitness_level: Optional[str] = "beginner"
+    dietary_preferences: List[str] = []
+
+class GoalRecipe(BaseModel):
+    name: str
+    prep_time: int
+    cook_time: int
+    total_time: int
+    ingredients: str
+    instructions: str
+    protein: float
+    sugar: float
+    fiber: float
+    calories: float
+
 @app.get("/")
 def home():
     return {"health_check": "OK"}
@@ -64,3 +81,39 @@ def update_item(prediction_input:PredictionIn):
     else:
         return {"output":output}
 
+
+@app.post("/goal-plan/", response_model=List[GoalRecipe])
+def get_goal_based_plan(req: GoalRequest):
+    df = dataset.copy()  # ✅ Use the preloaded dataset
+
+    df = df.rename(columns={
+        "Name": "name",
+        "PrepTime": "prep_time",
+        "CookTime": "cook_time",
+        "TotalTime": "total_time",
+        "RecipeIngredientParts": "ingredients",
+        "RecipeInstructions": "instructions",
+        "ProteinContent": "protein",
+        "SugarContent": "sugar",
+        "FiberContent": "fiber",
+        "Calories": "calories"
+    })
+
+    # Filter by goal
+    if req.goal == "muscle_gain":
+        df = df[df["protein"] >= 20]
+    elif req.goal == "weight_loss":
+        df = df[df["sugar"] <= 10 ]
+    elif req.goal == "endurance":
+        df = df[df["fiber"] >= 5]
+
+    # Dietary filters (optional)
+    for pref in req.dietary_preferences:
+        df = df[~df["ingredients"].str.contains(pref, case=False, na=False)]
+
+    df = df.sample(min(3, len(df)))
+
+    return df[[
+        "name", "prep_time", "cook_time", "total_time",
+        "ingredients", "instructions", "protein", "sugar", "fiber", "calories"
+    ]].to_dict(orient="records")
