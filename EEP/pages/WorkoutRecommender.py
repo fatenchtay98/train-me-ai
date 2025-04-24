@@ -53,7 +53,7 @@ if "recommendations" not in st.session_state:
 if "session_id" not in st.session_state:
     st.session_state.session_id = None
 if "user_id" not in st.session_state:
-    st.session_state.user_id = f"user_{int(time.time())}"
+    st.session_state.user_id = st.session_state.get("user", f"user_{int(time.time())}")
 
 st.markdown("<h1 style='color:#1664AD;'>🏋️ Workout Recommender</h1>", unsafe_allow_html=True)
 

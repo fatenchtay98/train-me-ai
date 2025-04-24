@@ -140,7 +140,7 @@ with col1:
     )
 
     if st.button("🚀 Get Started Now"):
-        st.switch_page("pages/Login.py")
+        st.switch_page("pages/SignUp.py")
 
 with col2:
     st.markdown(

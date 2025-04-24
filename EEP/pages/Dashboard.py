@@ -126,13 +126,19 @@ df = df.rename(columns={
 })
 df = df[["Session", "Timestamp", "Type", "Level", "Goal", "Exercise", "Category", "Difficulty", "Rating", "Completed", "Time (min)"]]
 
-# Simple formatting without matplotlib
-styled_df = df.style.format({
-    "Rating": "{:.1f}",
-    "Time (min)": "{:.0f}"
-}).bar(
-    subset=["Time (min)"], color="#1664AD"  # Only bar formatting here
-)
+df["Rating"] = df["Rating"].fillna(0)
+df["Time (min)"] = df["Time (min)"].fillna(0)
+
+if df["Time (min)"].nunique() > 1:
+    styled_df = df.style.format({
+        "Rating": "{:.1f}",
+        "Time (min)": "{:.0f}"
+    }).bar(subset=["Time (min)"], color="#1664AD")
+else:
+    styled_df = df.style.format({
+        "Rating": "{:.1f}",
+        "Time (min)": "{:.0f}"
+    })
 
 st.dataframe(styled_df, use_container_width=True, height=500)
 
