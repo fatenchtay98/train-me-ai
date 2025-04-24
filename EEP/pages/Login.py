@@ -103,12 +103,3 @@ if submitted:
         st.page_link("pages/Dashboard.py", label="Go to Dashboard")
     else:
         st.error("Invalid username or password.")
-
-st.markdown(
-    """
-<div class='signup-note'>
-    Don't have an account? <a href='/pages/SignUp.py'>Sign up here</a>
-</div>
-""",
-    unsafe_allow_html=True,
-)

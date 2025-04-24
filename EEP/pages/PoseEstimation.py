@@ -9,6 +9,7 @@ import numpy as np
 from io import BytesIO
 import time
 from sidebar import load_sidebar
+from core.config import IEP1_URL
 
 st.set_page_config(page_title="Pose Estimation | TrainMeAI", layout="centered")
 

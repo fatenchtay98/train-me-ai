@@ -117,12 +117,3 @@ if submitted:
         create_user(username, hashed_pw)
         st.success("✅ Account created! You can now log in.")
         st.page_link("pages/Login.py", label="Go to Login")
-
-st.markdown(
-    """
-<div class='login-note'>
-    Already have an account? <a href='/pages/Login.py'>Sign in here</a>
-</div>
-""",
-    unsafe_allow_html=True,
-)
