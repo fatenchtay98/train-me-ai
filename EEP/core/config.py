@@ -3,12 +3,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Database settings
-POSTGRES_DB = os.getenv("POSTGRES_DB")
-POSTGRES_USER = os.getenv("POSTGRES_USER")
-POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
-POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
+# Database URL
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # API endpoints
 IEP1_URL = os.getenv("IEP1_URL")
