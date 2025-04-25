@@ -4,9 +4,8 @@
   TrainMeAI
 </h1>
 
-**TrainMeAI** is an advanced AI-powered fitness platform designed to deliver personalized workout recommendations, real-time exercise form analysis, and intelligent meal planning. Leveraging state-of-the-art reinforcement learning, computer vision, and nutritional intelligence, TrainMeAI dynamically adapts to individual user needs—whether they are fitness novices or experienced athletes—offering a comprehensive and tailored approach to health and wellness.
 
-**TrainMeAI** is an AI-powered fitness platform designed to deliver personalized workout recommendations, real-time exercise form analysis, and intelligent meal planning. By integrating reinforcement learning, computer vision, and machine learning, it continuously adapts to each user’s fitness level, goals, and preferences.
+**TrainMeAI** is an AI-powered fitness platform designed to deliver personalized workout recommendations, real-time exercise form analysis, and intelligent meal planning. By integrating reinforcement learning, computer vision, and machine learning, TrainMeAI dynamically adapts to individual user needs—whether they are fitness beginners or experienced athletes—offering a comprehensive and tailored approach to health and wellness.
 
 # Features
 
@@ -79,20 +78,44 @@ The TrainMeAI platform was deployed using a containerized microservices architec
 - **Kubernetes Secrets** are used for secure storage of sensitive data such as database URLs and API keys.
 - **ConfigMaps** store service-specific environment variables and runtime configurations.
 
-### Monitoring and Observability
-
-- **Prometheus** collects metrics from each IEP and the frontend.
-- **Grafana** visualizes service performance, including:
-  - Inference latency
-  - Recommendation accuracy
-  - API health and usage metrics
-
 ### Service Communication
 
 - All services communicate via internal service names in AKS using `ClusterIP` networking.
 - No direct communication occurs between AI modules—communication flows only through API requests initiated by the frontend (EEP).
 
 
+## Monitoring and Observability
+
+TrainMeAI includes a full observability stack powered by **Prometheus** and **Grafana** to monitor the health and performance of all intelligent services (IEPs and EEP).
+
+- **Prometheus** collects metrics from each IEPs and the frontend.
+- **Grafana** visualizes service performance
+
+### Metrics tracked
+                                           
+    | Total number of HTTP requests                    
+    | Requests per second (RPS)                        
+    | Latency histogram with p95 duration          
+    | Real-time memory usage                       
+    | CPU usage per container                      
+    | Uptime since the container started            
+
+### Viewing the Dashboard (Locally)
+1- After running docker-compose.yaml, open Grafana in your browser:
+  http://localhost:3000
+
+2. Login using default credentials:
+- **Username**: `admin`
+- **Password**: `admin`
+
+3. Go to **“+ → Import”**
+4. Upload the dashboard JSON file from the [Shared Folder](https://drive.google.com/file/d/1mI9d-6bjJSsqCOKwYUGJ2l11w8t6NpnF/view)
+
+
+5. Select your Prometheus data source and click **Import**
+
+
 # Resources
-https://drive.google.com/drive/folders/1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl?q=sharedwith:public%20parent:1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl
+Additional relevant data can bbe found in a 
+[Shared folder](https://drive.google.com/drive/folders/1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl?q=sharedwith:public%20parent:1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl)
 ---
