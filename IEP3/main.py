@@ -3,6 +3,7 @@ from pydantic import BaseModel,conlist
 from typing import List,Optional
 import pandas as pd
 from model import recommend,output_recommended_recipes
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 dataset=pd.read_csv('data/dataset.csv',compression='gzip')
@@ -117,3 +118,5 @@ def get_goal_based_plan(req: GoalRequest):
         "name", "prep_time", "cook_time", "total_time",
         "ingredients", "instructions", "protein", "sugar", "fiber", "calories"
     ]].to_dict(orient="records")
+
+instrumentator = Instrumentator().instrument(app).expose(app)
