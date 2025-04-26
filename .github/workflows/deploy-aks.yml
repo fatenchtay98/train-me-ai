@@ -92,7 +92,7 @@ jobs:
         kubectl apply -f k8s/iep3-service.yaml
     - name: Restart Deployments to Pull Latest Images
       run: |
-        kubectl rollout restart deployment eep-1
+        kubectl rollout restart deployment eep
         kubectl rollout restart deployment iep-1
         kubectl rollout restart deployment iep-2
         kubectl rollout restart deployment iep-3
