@@ -1,6 +1,6 @@
-fastapi
-uvicorn
-opencv-python
-numpy
-mediapipe
-python-multipart
+fastapi==0.115.12
+uvicorn==0.33.0
+opencv-python==4.11.0.86
+numpy==1.24.4
+mediapipe==0.10.9
+python-multipart==0.0.6

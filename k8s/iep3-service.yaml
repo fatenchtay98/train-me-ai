@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: iep3  # must match what's used in IEP3_URL
+  namespace: default
+spec:
+  selector:
+    app: iep-3  # this should match the label in IEP3 Deployment
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8002      # what other pods use to reach this service
+      targetPort: 8002  # must match the containerPort in the Deployment

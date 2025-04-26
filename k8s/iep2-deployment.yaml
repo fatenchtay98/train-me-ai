@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iep-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iep-2
+  template:
+    metadata:
+      labels:
+        app: iep-2
+    spec:
+      containers:
+        - name: iep-2
+          image: trainmeaiacr.azurecr.io/iep-2
+          ports:
+            - containerPort: 8000
+          env:
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: iep2-secret
+                  key: DATABASE_URL
