@@ -1,0 +1,102 @@
+name: CI/CD - TrainMeAI AKS Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to Azure Container Registry (ACR)
+      uses: docker/login-action@v2
+      with:
+        registry: trainmeaiacr.azurecr.io
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    # ---------- Build and Push eep ----------
+    - name: Build and Push EEP with Cache
+      uses: docker/build-push-action@v5
+      with:
+        context: ./EEP
+        push: true
+        tags: trainmeaiacr.azurecr.io/eep:latest
+        cache-from: type=registry,ref=trainmeaiacr.azurecr.io/eep:cache
+        cache-to: type=registry,ref=trainmeaiacr.azurecr.io/eep:cache,mode=max
+
+    # ---------- Build and Push iep-1 ----------
+    - name: Build and Push IEP-1 with Cache
+      uses: docker/build-push-action@v5
+      with:
+        context: ./IEP1
+        push: true
+        tags: trainmeaiacr.azurecr.io/iep-1:latest
+        cache-from: type=registry,ref=trainmeaiacr.azurecr.io/iep-1:cache
+        cache-to: type=registry,ref=trainmeaiacr.azurecr.io/iep-1:cache,mode=max
+
+    # ---------- Build and Push iep-2 ----------
+    - name: Build and Push IEP-2 with Cache
+      uses: docker/build-push-action@v5
+      with:
+        context: ./IEP2
+        push: true
+        tags: trainmeaiacr.azurecr.io/iep-2:latest
+        cache-from: type=registry,ref=trainmeaiacr.azurecr.io/iep-2:cache
+        cache-to: type=registry,ref=trainmeaiacr.azurecr.io/iep-2:cache,mode=max
+
+    # ---------- Build and Push iep-3 ----------
+    - name: Build and Push IEP-3 with Cache
+      uses: docker/build-push-action@v5
+      with:
+        context: ./IEP3
+        push: true
+        tags: trainmeaiacr.azurecr.io/iep-3:latest
+        cache-from: type=registry,ref=trainmeaiacr.azurecr.io/iep-3:cache
+        cache-to: type=registry,ref=trainmeaiacr.azurecr.io/iep-3:cache,mode=max
+
+    # ---------- Connect to AKS ----------
+    - name: Set AKS context
+      uses: azure/aks-set-context@v3
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        resource-group: DefaultResourceGroup-WEU
+        cluster-name: trainmeai-cluster
+        subscription-id: 7d71ca17-f996-4e13-a5fc-095305b0e59e
+
+    # ---------- Deploy Kubernetes Resources ----------
+    - name: Apply Kubernetes Manifests
+      run: |
+        kubectl apply -f k8s/eep-deployment.yaml
+        kubectl apply -f k8s/eep-service.yaml
+        kubectl apply -f k8s/eep-configmap.yaml
+        kubectl apply -f k8s/iep1-deployment.yaml
+        kubectl apply -f k8s/iep1-service.yaml
+        kubectl apply -f k8s/iep2-deployment.yaml
+        kubectl apply -f k8s/iep2-service.yaml
+        kubectl apply -f k8s/iep3-deployment.yaml
+        kubectl apply -f k8s/iep3-service.yaml
+    - name: Restart Deployments to Pull Latest Images
+      run: |
+        kubectl rollout restart deployment eep
+        kubectl rollout restart deployment iep-1
+        kubectl rollout restart deployment iep-2
+        kubectl rollout restart deployment iep-3
+    - name: Get Services
+      run: kubectl get svc
+    - name: Deployment Summary
+      run: echo "TrainMeAI successfully deployed to AKS!" >> $GITHUB_STEP_SUMMARY

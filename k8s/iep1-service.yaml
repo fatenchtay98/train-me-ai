@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: iep1  # must match what's used in IEP1_URL
+  namespace: default
+spec:
+  selector:
+    app: iep-1  # this should match the label in IEP1 Deployment
+  type: ClusterIP  # default and best for internal communication
+  ports:
+    - protocol: TCP
+      port: 8001       # what other pods use to reach this service
+      targetPort: 8001 # must match the containerPort in the Deployment

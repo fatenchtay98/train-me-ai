@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: eep-config
+  namespace: default
+data:
+  IEP1_URL: http://iep1:8001/api/v1/pose
+  IEP2_URL: http://iep2:8000/api/v1
+  IEP3_URL: http://iep3:8002
+  APP_MODE: production

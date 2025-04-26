@@ -1,0 +1,79 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: trainmeai_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  streamlit:
+    build:
+      context: ./EEP
+    container_name: trainmeai_eep
+    env_file: ./EEP/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    ports:
+      - "8501:8501"
+    devices:
+      - "/dev/video0:/dev/video0"
+    privileged: true
+
+  iep2:
+    build:
+      context: ./IEP2
+    container_name: trainmeai_iep2
+    env_file: ./IEP2/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    ports:
+      - "8000:8000"
+
+  iep1:
+    build:
+      context: ./IEP1
+    container_name: trainmeai_iep1
+    env_file: ./IEP1/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8001:8001"
+
+  iep3:
+    build:
+      context: ./IEP3
+    container_name: trainmeai_iep3
+    env_file: ./IEP3/.env 
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - postgres
+    ports:
+      - 8002:8002
+  
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  pgdata:
+  grafana-storage:
