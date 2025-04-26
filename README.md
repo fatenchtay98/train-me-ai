@@ -116,6 +116,5 @@ TrainMeAI includes a full observability stack powered by **Prometheus** and **Gr
 
 
 # Resources
-Additional relevant data can bbe found in a 
-[Shared folder](https://drive.google.com/drive/folders/1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl?q=sharedwith:public%20parent:1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl)
----
+Additional relevant data can be found in the following
+[Shared folder](https://drive.google.com/drive/folders/1opgEii5W0dIYtCmPPjr66w7nCjJ_FWEl?usp=sharing)
